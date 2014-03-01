@@ -15,7 +15,7 @@ class Comment < ActiveRecord::Base
   belongs_to :post
 end
 
-class AuthorDetails < ActiveRecord::Base
+class AuthorDetail < ActiveRecord::Base
   belongs_to :author
   has_one :address
 end
