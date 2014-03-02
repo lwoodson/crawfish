@@ -1,7 +1,7 @@
-require "entitree/version"
-require "entitree/node"
+require "crawfish/version"
+require "crawfish/node"
 
-module Entitree
+module Crawfish
   class << self
     attr_accessor :node_decorator
 

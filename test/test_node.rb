@@ -1,26 +1,26 @@
 require_relative 'test_helper'
 
-describe Entitree::Node do
-  let(:root_node) {Entitree::Node.new(Author)}
-  let(:child_node) {Entitree::Node.new(Post, ref_key: :posts, parent: root_node)}
-  let(:grandchild_node) {Entitree::Node.new(Comment, ref_key: :comments, parent: child_node)}
+describe Crawfish::Node do
+  let(:root_node) {Crawfish::Node.new(Author)}
+  let(:child_node) {Crawfish::Node.new(Post, ref_key: :posts, parent: root_node)}
+  let(:grandchild_node) {Crawfish::Node.new(Comment, ref_key: :comments, parent: child_node)}
   let(:belongs_to_node) {
-    Entitree::Node.new(Post, reflection: Post.reflections[:author])
+    Crawfish::Node.new(Post, reflection: Post.reflections[:author])
   }
   let(:has_one_node) {
-    Entitree::Node.new(Author, reflection: Author.reflections[:author_detail])
+    Crawfish::Node.new(Author, reflection: Author.reflections[:author_detail])
   }
   let(:has_one_through_node) {
-    Entitree::Node.new(Author, reflection: Author.reflections[:address])
+    Crawfish::Node.new(Author, reflection: Author.reflections[:address])
   }
   let(:has_many_node) {
-    Entitree::Node.new(Author, reflection: Author.reflections[:posts])
+    Crawfish::Node.new(Author, reflection: Author.reflections[:posts])
   }
   let(:has_many_through_node) {
-    Entitree::Node.new(Author, reflection: Author.reflections[:comments])
+    Crawfish::Node.new(Author, reflection: Author.reflections[:comments])
   }
   let(:has_and_belongs_to_many_node) {
-    Entitree::Node.new(Post, reflection: Post.reflections[:tags])
+    Crawfish::Node.new(Post, reflection: Post.reflections[:tags])
   }
 
   describe "#reflection" do
@@ -48,7 +48,7 @@ describe Entitree::Node do
   end
 
   describe "#associated_nodes" do
-    subject {Entitree::Node.new(Author)}
+    subject {Crawfish::Node.new(Author)}
     let(:associated_node_paths) {subject.associated_nodes.map(&:path)}
 
     it "should include has_one nodes" do
@@ -68,7 +68,7 @@ describe Entitree::Node do
     end
 
     it "should include has_and_belongs_to_many nodes" do
-      Entitree::Node.new(Post).associated_nodes.map(&:path).must_include "Post/tags"
+      Crawfish::Node.new(Post).associated_nodes.map(&:path).must_include "Post/tags"
     end
 
     it "should decorate associated nodes with the node decorator, if nay" do
@@ -78,20 +78,20 @@ describe Entitree::Node do
           node
         end
       end
-      node = Entitree::Node.new(Post, node_decorator: NodeDecorator)
+      node = Crawfish::Node.new(Post, node_decorator: NodeDecorator)
       node.associated_nodes.each {|node| node.respond_to?(:foo).must_equal true}
     end
   end
 
   describe "#nodes_above" do
     it "should only include nodes for belongs_to relationships" do
-      Entitree::Node.new(Post).nodes_above.map(&:path).must_equal ["Post/author"]
+      Crawfish::Node.new(Post).nodes_above.map(&:path).must_equal ["Post/author"]
     end
   end
 
   describe "#nodes_below" do
     it "should include only nodes for the has_many relationships of the node's model" do
-      paths = Entitree::Node.new(Author).nodes_below.map(&:path)
+      paths = Crawfish::Node.new(Author).nodes_below.map(&:path)
       paths.must_include "Author/posts"
       paths.must_include "Author/comments"
       paths.wont_include "Author/author_detail"
@@ -101,7 +101,7 @@ describe Entitree::Node do
 
   describe "#nodes_aside" do
     it "should include only nodes for the has_one and has_and_belongs_to_many relationships" do
-      paths = Entitree::Node.new(Author).nodes_aside.map(&:path)
+      paths = Crawfish::Node.new(Author).nodes_aside.map(&:path)
       paths.must_include "Author/author_detail"
       paths.must_include "Author/address"
       paths.wont_include "Author/posts"
@@ -138,7 +138,7 @@ describe Entitree::Node do
     end
 
     it "should allow flatten to be filtered via lambda" do
-      root = Entitree::Node.new(Post)
+      root = Crawfish::Node.new(Post)
       filter = lambda{|n| !n.above?}
       paths = root.flatten(filter).map(&:path)
       paths.must_include "Post"
@@ -148,7 +148,7 @@ describe Entitree::Node do
     end
 
     it "should work with non-root nodes, too" do
-      node = Entitree::Node.new(Author).locate("Author/posts")
+      node = Crawfish::Node.new(Author).locate("Author/posts")
       paths = node.flatten.map(&:path)
       paths.must_include "Author/posts"
       paths.must_include "Author/posts/comments"
@@ -156,7 +156,7 @@ describe Entitree::Node do
     end
 
     it "should work with models within module namespaces" do
-      root = Entitree::Node.new(Acme::Product)
+      root = Crawfish::Node.new(Acme::Product)
       paths = root.flatten.map(&:path)
       paths.must_include "Acme::Product"
       paths.must_include "Acme::Product/features"

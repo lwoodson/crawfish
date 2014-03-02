@@ -1,14 +1,14 @@
 # coding: utf-8
 lib = File.expand_path('../lib', __FILE__)
 $LOAD_PATH.unshift(lib) unless $LOAD_PATH.include?(lib)
-require 'entitree/version'
+require 'crawfish/version'
 
 Gem::Specification.new do |spec|
-  spec.name          = "entitree"
-  spec.version       = Entitree::VERSION
+  spec.name          = "crawfish"
+  spec.version       = Crawfish::VERSION
   spec.authors       = ["Lance Woodson"]
   spec.email         = ["lance@webmaneuvers.com"]
-  spec.summary       = %q{Allows entity tree traversal and visitor operations within ActiveRecord models}
+  spec.summary       = %q{Crawfishing for active record models.  Yeehaw"}
   spec.description   = spec.summary
   spec.homepage      = ""
   spec.license       = "MIT"

@@ -2,7 +2,7 @@ require 'minitest/spec'
 require 'minitest/autorun'
 require 'sqlite3'
 require 'active_record'
-require 'entitree'
+require 'crawfish'
 
 ActiveRecord::Base.establish_connection(
   :adapter => 'sqlite3',

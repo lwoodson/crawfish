@@ -1,6 +1,6 @@
 require 'set'
 
-module Entitree
+module Crawfish
   ##
   # A node within the graph of models from a root or entity node.
   class Node
