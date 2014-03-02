@@ -9,8 +9,8 @@ Gem::Specification.new do |spec|
   spec.authors       = ["Lance Woodson"]
   spec.email         = ["lance@webmaneuvers.com"]
   spec.summary       = %q{Crawfishing for active record models.  Yeehaw"}
-  spec.description   = spec.summary
-  spec.homepage      = ""
+  spec.description   = "Tree and flattened array data structures for traversing an ActiveRecord model graph"
+  spec.homepage      = "https://github.com/lwoodson/crawfish"
   spec.license       = "MIT"
 
   spec.files         = `git ls-files -z`.split("\x0")
@@ -19,8 +19,8 @@ Gem::Specification.new do |spec|
   spec.require_paths = ["lib"]
 
   spec.add_development_dependency "bundler", "~> 1.5"
-  spec.add_development_dependency "rake"
-  spec.add_development_dependency 'sqlite3'
-  spec.add_development_dependency "pry"
-  spec.add_runtime_dependency 'activerecord', '>3.1'
+  spec.add_development_dependency "rake", "~> 0"
+  spec.add_development_dependency 'sqlite3', "~> 0"
+  spec.add_development_dependency "pry", "~> 0"
+  spec.add_runtime_dependency 'activerecord', '~> 3.1'
 end
