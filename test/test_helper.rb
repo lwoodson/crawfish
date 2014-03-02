@@ -6,7 +6,7 @@ require 'entitree'
 
 ActiveRecord::Base.establish_connection(
   :adapter => 'sqlite3',
-  :database => 'test.db'
+  :database => ':memory:'
 )
 
 require_relative 'model.rb'
