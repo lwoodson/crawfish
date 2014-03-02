@@ -24,15 +24,28 @@ module Entitree
     end
 
     def nodes_above
-      associated_nodes.select{|node| node.belongs_to?}
+      associated_nodes.select(&:above?)
     end
 
     def nodes_below
-      associated_nodes.select{|node| node.has_many?}
+      associated_nodes.select(&:below?)
     end
 
     def nodes_aside
-      associated_nodes.select{|node| node.has_one? || node.has_and_belongs_to_many?}
+      associated_nodes.select(&:aside?)
+    end
+
+    def locate(path)
+      return self if path == model.to_s || path == ref_key.to_s
+
+      next_element, *other_elements = path.split('/')
+      if next_element == model.to_s
+        next_element, *other_elements = other_elements
+      end
+      return self unless next_element
+
+      next_node = associated_nodes.detect{|node| node.ref_key.to_s == next_element}
+      next_node.locate(other_elements.join("/"))
     end
 
     def other_model
@@ -62,6 +75,13 @@ module Entitree
 
     def through?
       reflection && reflection.options[:through].present?
+    end
+
+    alias_method :above?, :belongs_to?
+    alias_method :below?, :has_many?
+
+    def aside?
+      has_one? || has_and_belongs_to_many?
     end
   end
 end

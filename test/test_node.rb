@@ -98,6 +98,20 @@ describe Entitree::Node do
     end
   end
 
+  describe "#locate" do
+    it "should be able to find a root node" do
+      root_node.locate('Author').model.must_equal Author
+    end
+
+    it "should be able to find a node directly beneath a root" do
+      root_node.locate('Author/posts').model.must_equal Post
+    end
+
+    it "should be able to find a node arbitrarily away from a root" do
+      root_node.locate('Author/posts/comments').model.must_equal Comment
+    end
+  end
+
   describe "#root?" do
     it "should be true when ref_key not present" do
       root_node.root?.must_equal true
