@@ -1,6 +1,16 @@
 require_relative 'test_helper'
 
 describe Entitree do
+  class NodeDecorator
+    def self.decorate(node)
+      node.define_singleton_method(:foo) {"bar"}
+      node
+    end
+  end
+  let(:node_decorator) {
+    NodeDecorator
+  }
+
   describe "#trees" do
     it "should return a node for a single entity" do
       Entitree.trees(Post).map(&:path).must_equal ["Post"]
@@ -11,6 +21,11 @@ describe Entitree do
       paths.must_include "Post"
       paths.must_include "Author"
       paths.must_include "Comment"
+    end
+
+    it "should allow specification of a node decorator" do
+      trees = Entitree.trees(Post, Author, node_decorator: node_decorator)
+      trees.each {|root_node| root_node.respond_to?(:foo).must_equal true}
     end
   end
 
@@ -40,6 +55,11 @@ describe Entitree do
       paths.must_include "Post/author"
       paths.wont_include "Post/comments"
       paths.wont_include "Author/posts/comments"
+    end
+
+    it "should allow a node_decorator to decorate the flattened nodes" do
+      nodes = Entitree.nodes(Post, Author, node_decorator: node_decorator)
+      nodes.each {|node| node.respond_to?(:foo).must_equal true}
     end
   end
 

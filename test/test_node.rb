@@ -70,6 +70,17 @@ describe Entitree::Node do
     it "should include has_and_belongs_to_many nodes" do
       Entitree::Node.new(Post).associated_nodes.map(&:path).must_include "Post/tags"
     end
+
+    it "should decorate associated nodes with the node decorator, if nay" do
+      class NodeDecorator
+        def self.decorate(node)
+          node.define_singleton_method(:foo) {"bar"}
+          node
+        end
+      end
+      node = Entitree::Node.new(Post, node_decorator: NodeDecorator)
+      node.associated_nodes.each {|node| node.respond_to?(:foo).must_equal true}
+    end
   end
 
   describe "#nodes_above" do

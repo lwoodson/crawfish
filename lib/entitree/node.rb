@@ -5,12 +5,13 @@ module Entitree
   # A node within the graph of models from a root or entity node.
   class Node
     attr_reader :model, :ref_key, :reflection
-    attr_accessor :parent
+    attr_accessor :parent, :node_decorator
     def initialize(model, opts={})
       @model = model
       @ref_key = opts[:ref_key]
       @parent = opts[:parent]
       @reflection = opts[:reflection]
+      @node_decorator = opts[:node_decorator]
     end
 
     ##
@@ -34,7 +35,14 @@ module Entitree
 
     def associated_nodes
       @associated_nodes ||= model.reflections.map do |key, reflection|
-        Node.new(reflection.klass, ref_key: key, parent: self, reflection: reflection)
+        node = Node.new reflection.klass, ref_key: key,
+                                          parent: self,
+                                          reflection: reflection,
+                                          node_decorator: node_decorator
+        if node_decorator
+          node = node_decorator.decorate(node)
+        end
+        node
       end
     end
 
