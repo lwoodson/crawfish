@@ -21,9 +21,19 @@ class AuthorDetail < ActiveRecord::Base
 end
 
 class Address < ActiveRecord::Base
-  belongs_to :author_details
+  belongs_to :author_detail
 end
 
 class Tag < ActiveRecord::Base
   has_and_belongs_to_many :posts
+end
+
+module Acme
+  class Product < ActiveRecord::Base
+    has_many :features
+  end
+
+  class Feature < ActiveRecord::Base
+    belongs_to :product
+  end
 end

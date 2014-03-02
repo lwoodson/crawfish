@@ -1,4 +1,8 @@
+require 'set'
+
 module Entitree
+  ##
+  # A node within the graph of models from a root or entity node.
   class Node
     attr_reader :model, :ref_key, :reflection
     attr_accessor :parent
@@ -7,6 +11,17 @@ module Entitree
       @ref_key = opts[:ref_key]
       @parent = opts[:parent]
       @reflection = opts[:reflection]
+    end
+
+    ##
+    # Returns a flattened array of nodes from the node
+    def flatten(filter=lambda{|n| true}, result=Set.new)
+      result.add(self)
+      associated_nodes.reject(&visited_models(result)).select(&filter).each do |node|
+        result.add(node)
+        node.flatten(filter, result)
+      end
+      result.to_a
     end
 
     def path
@@ -82,6 +97,13 @@ module Entitree
 
     def aside?
       has_one? || has_and_belongs_to_many?
+    end
+    
+    private
+    def visited_models(result)
+      lambda do |node|
+        result.detect{|n| n.model == node.model}
+      end
     end
   end
 end

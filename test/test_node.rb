@@ -112,6 +112,46 @@ describe Entitree::Node do
     end
   end
 
+  describe "#flatten" do
+    it "should return all nodes reachable from the root with no filter" do
+      paths = root_node.flatten.map(&:path)
+      paths.must_include "Author"
+      paths.must_include "Author/author_detail"
+      paths.must_include "Author/address"
+      paths.must_include "Author/posts"
+      paths.must_include "Author/comments"
+      paths.must_include "Author/author_detail/address"
+      paths.must_include "Author/posts/comments"
+      paths.must_include "Author/posts/tags"
+      paths.size.must_equal 8
+    end
+
+    it "should allow flatten to be filtered via lambda" do
+      root = Entitree::Node.new(Post)
+      filter = lambda{|n| !n.above?}
+      paths = root.flatten(filter).map(&:path)
+      paths.must_include "Post"
+      paths.must_include "Post/comments"
+      paths.must_include "Post/tags"
+      paths.wont_include "Post/author"
+    end
+
+    it "should work with non-root nodes, too" do
+      node = Entitree::Node.new(Author).locate("Author/posts")
+      paths = node.flatten.map(&:path)
+      paths.must_include "Author/posts"
+      paths.must_include "Author/posts/comments"
+      paths.must_include "Author/posts/tags"
+    end
+
+    it "should work with models within module namespaces" do
+      root = Entitree::Node.new(Acme::Product)
+      paths = root.flatten.map(&:path)
+      paths.must_include "Acme::Product"
+      paths.must_include "Acme::Product/features"
+    end
+  end
+
   describe "#root?" do
     it "should be true when ref_key not present" do
       root_node.root?.must_equal true
